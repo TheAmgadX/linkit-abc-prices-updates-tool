@@ -261,3 +261,40 @@ func (e *ExcelFileManager) WriteStream() error {
 
 	return f.SaveAs(e.OutputFile)
 }
+
+// used in reporting missing IVIDs in IMF and the ivids that are in IMF but not in the stock.
+func (e *ExcelFileManager) WriteStreamReport(iv_ids []internal.IVID) error {
+	f := excel.NewFile()
+	defer f.Close()
+
+	sw, err := f.NewStreamWriter("Sheet1")
+	if err != nil {
+		return err
+	}
+
+	// Header
+	if err := sw.SetRow("A1", []interface{}{
+		"iv_id",
+	}); err != nil {
+		return err
+	}
+
+	row := 2
+	for _, ivID := range iv_ids {
+		cell := fmt.Sprintf("A%d", row)
+
+		if err := sw.SetRow(cell, []interface{}{
+			int(ivID),
+		}); err != nil {
+			return err
+		}
+
+		row++
+	}
+
+	if err := sw.Flush(); err != nil {
+		return err
+	}
+
+	return f.SaveAs(e.OutputFile)
+}

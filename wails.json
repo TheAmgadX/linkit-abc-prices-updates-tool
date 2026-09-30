@@ -1,0 +1,26 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "linkit-abc-price-updater",
+  "outputfilename": "linkit-abc-price-updater",
+  "frontend": {
+    "dir": "gui/frontend",
+    "build": "",
+    "install": "",
+    "dev": "",
+    "bridge": ""
+  },
+  "author": {
+    "name": "LinkIt",
+    "email": ""
+  },
+  "info": {
+    "companyName": "LinkIt",
+    "productName": "ABC Price Updater",
+    "productVersion": "1.0.0",
+    "copyright": "© LinkIt",
+    "comments": "Update product prices using Stock and IMF data."
+  },
+  "assetdir": "gui/frontend",
+  "reloaddirs": "",
+  "wailsjsdir": "gui/frontend"
+}
