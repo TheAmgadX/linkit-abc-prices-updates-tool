@@ -82,12 +82,18 @@ func (s *service) Process(input ProcessInput) ProcessingResult {
 	stockManager := excel.NewExcelFileManager(
 		input.StockFilePath,
 		"",
-		[]string{"ProductId", "SalePrice"},
+		[]string{input.StockIVIDColumn, input.StockPriceColumn},
+		input.StockPriceColumn,
+		input.StockIVIDColumn,
+		"",
 	)
 	imfManager := excel.NewExcelFileManager(
 		input.IMFFilePath,
 		"",
-		[]string{"ProductId", "VAT"},
+		[]string{input.IMFIVIDColumn, input.IMFVATColumn},
+		"",
+		input.IMFIVIDColumn,
+		input.IMFVATColumn,
 	)
 
 	var wg sync.WaitGroup
@@ -126,7 +132,7 @@ func (s *service) Process(input ProcessInput) ProcessingResult {
 	missingInStockCount := len(processor.HaveNoMatchingIVID)
 
 	// ---- Write main report -----------------------------------------------
-	writer := excel.NewExcelFileManager("", mainFile, nil)
+	writer := excel.NewExcelFileManager("", mainFile, nil, "", "", "")
 	writer.Data = result
 
 	if err := writer.WriteStream(); err != nil {
@@ -138,7 +144,7 @@ func (s *service) Process(input ProcessInput) ProcessingResult {
 	// ---- Write mismatch reports conditionally ----------------------------
 	if missingInIMFCount > 0 {
 		missingInIMFFile = uniquePath(missingInIMFFile)
-		reportWriter := excel.NewExcelFileManager("", missingInIMFFile, nil)
+		reportWriter := excel.NewExcelFileManager("", missingInIMFFile, nil, "", "", "")
 		if err := reportWriter.WriteStreamReport(processor.NotFoundIVID); err != nil {
 			return ProcessingResult{Error: fmt.Sprintf("Failed to write missing-in-IMF report: %v", err)}
 		}
@@ -147,7 +153,7 @@ func (s *service) Process(input ProcessInput) ProcessingResult {
 
 	if missingInStockCount > 0 {
 		missingInStockFile = uniquePath(missingInStockFile)
-		reportWriter := excel.NewExcelFileManager("", missingInStockFile, nil)
+		reportWriter := excel.NewExcelFileManager("", missingInStockFile, nil, "", "", "")
 		if err := reportWriter.WriteStreamReport(processor.HaveNoMatchingIVID); err != nil {
 			return ProcessingResult{Error: fmt.Sprintf("Failed to write missing-in-Stock report: %v", err)}
 		}
@@ -181,6 +187,18 @@ func validateInput(input ProcessInput) error {
 	}
 	if strings.TrimSpace(input.StockFilePath) == "" {
 		return fmt.Errorf("stock file is required")
+	}
+	if strings.TrimSpace(input.StockIVIDColumn) == "" {
+		return fmt.Errorf("stock Price ID column name is required")
+	}
+	if strings.TrimSpace(input.StockPriceColumn) == "" {
+		return fmt.Errorf("stock Price column name is required")
+	}
+	if strings.TrimSpace(input.IMFIVIDColumn) == "" {
+		return fmt.Errorf("IMF Price ID column name is required")
+	}
+	if strings.TrimSpace(input.IMFVATColumn) == "" {
+		return fmt.Errorf("IMF VAT column name is required")
 	}
 
 	if info, err := os.Stat(input.OutputDir); err != nil || !info.IsDir() {

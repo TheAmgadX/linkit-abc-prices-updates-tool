@@ -10,17 +10,23 @@ import (
 )
 
 type ExcelFileManager struct {
-	Data       map[internal.IVID]internal.Product
-	InputFile  string
-	OutputFile string
-	Columns    []string
+	Data            map[internal.IVID]internal.Product
+	InputFile       string
+	OutputFile      string
+	Columns         []string
+	PriceColumnName string
+	IVIDColumnName  string
+	VATColumnName   string
 }
 
-func NewExcelFileManager(inputFile, outputFile string, columns []string) *ExcelFileManager {
+func NewExcelFileManager(inputFile, outputFile string, columns []string, priceColumnName, ividColumnName, vatColumnName string) *ExcelFileManager {
 	return &ExcelFileManager{
-		InputFile:  inputFile,
-		OutputFile: outputFile,
-		Columns:    columns,
+		InputFile:       inputFile,
+		OutputFile:      outputFile,
+		Columns:         columns,
+		PriceColumnName: priceColumnName,
+		IVIDColumnName:  ividColumnName,
+		VATColumnName:   vatColumnName,
 	}
 }
 
@@ -83,18 +89,17 @@ func (e *ExcelFileManager) Read() error {
 	}
 
 	// get dimensions to preallocate map
-	dimension, err := f.GetSheetDimension(sheet)
-	parts := strings.Split(dimension, ":")
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid dimension: %s", dimension)
+	var initialCap int = 1000
+	if dimension, err := f.GetSheetDimension(sheet); err == nil && dimension != "" {
+		parts := strings.Split(dimension, ":")
+		if len(parts) == 2 {
+			if _, endRow, err := excel.CellNameToCoordinates(parts[1]); err == nil && endRow > 0 {
+				initialCap = endRow
+			}
+		}
 	}
 
-	_, endRow, err := excel.CellNameToCoordinates(parts[1])
-	if err != nil {
-		return err
-	}
-
-	e.Data = make(map[internal.IVID]internal.Product, endRow)
+	e.Data = make(map[internal.IVID]internal.Product, initialCap)
 
 	rows, err := f.Rows(sheet)
 	if err != nil {
@@ -138,7 +143,7 @@ func (e *ExcelFileManager) Read() error {
 
 		second_column := e.Columns[1]
 
-		if second_column == "VAT" {
+		if second_column == e.VATColumnName {
 			floatVal, err := strconv.ParseFloat(valueStr, 32)
 			if err != nil {
 				return fmt.Errorf("Error: couldn't convert vat: %v", valueStr)
@@ -146,7 +151,7 @@ func (e *ExcelFileManager) Read() error {
 			product.VAT = float32(floatVal)
 		}
 
-		if second_column == "SalePrice" {
+		if second_column == e.PriceColumnName {
 			valueStr = strings.ReplaceAll(valueStr, ",", "")
 			float_price, err := strconv.ParseFloat(valueStr, 32)
 			if err != nil {

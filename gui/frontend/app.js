@@ -49,7 +49,7 @@ function setError(fieldId, msg) {
 }
 
 function clearErrors() {
-  ['orgName', 'outputDir', 'imfFile', 'stockFile'].forEach((id) => setError(id, ''));
+  ['orgName', 'outputDir', 'imfFile', 'imfIvidColumn', 'imfVatColumn', 'stockFile', 'stockIvidColumn', 'stockPriceColumn'].forEach((id) => setError(id, ''));
 }
 
 function validateForm() {
@@ -77,11 +77,43 @@ function validateForm() {
     setError('imfFile', '');
   }
 
+  const imfIvid = $('imfIvidColumn').value.trim();
+  if (!imfIvid) {
+    setError('imfIvidColumn', 'IMF Price ID column is required.');
+    valid = false;
+  } else {
+    setError('imfIvidColumn', '');
+  }
+
+  const imfVat = $('imfVatColumn').value.trim();
+  if (!imfVat) {
+    setError('imfVatColumn', 'IMF VAT column is required.');
+    valid = false;
+  } else {
+    setError('imfVatColumn', '');
+  }
+
   if (!state.stockFilePath) {
     setError('stockFile', 'Please select the Stock Excel file.');
     valid = false;
   } else {
     setError('stockFile', '');
+  }
+
+  const stockIvid = $('stockIvidColumn').value.trim();
+  if (!stockIvid) {
+    setError('stockIvidColumn', 'Stock Price ID column is required.');
+    valid = false;
+  } else {
+    setError('stockIvidColumn', '');
+  }
+
+  const stockPrice = $('stockPriceColumn').value.trim();
+  if (!stockPrice) {
+    setError('stockPriceColumn', 'Stock Price column is required.');
+    valid = false;
+  } else {
+    setError('stockPriceColumn', '');
   }
 
   return valid;
@@ -137,10 +169,14 @@ async function processFiles() {
   showScreen('processing');
 
   const input = {
-    orgName:       $('orgName').value.trim(),
-    outputDir:     state.outputDir,
-    imfFilePath:   state.imfFilePath,
-    stockFilePath: state.stockFilePath,
+    orgName:          $('orgName').value.trim(),
+    outputDir:        state.outputDir,
+    imfFilePath:      state.imfFilePath,
+    stockFilePath:    state.stockFilePath,
+    stockIvidColumn:  $('stockIvidColumn').value.trim(),
+    stockPriceColumn: $('stockPriceColumn').value.trim(),
+    imfIvidColumn:    $('imfIvidColumn').value.trim(),
+    imfVatColumn:     $('imfVatColumn').value.trim(),
   };
 
   try {
@@ -233,6 +269,10 @@ function resetForm() {
   $('outputDir').value = '';
   $('imfFile').value = '';
   $('stockFile').value = '';
+  $('imfIvidColumn').value = 'ProductId';
+  $('imfVatColumn').value = 'VAT';
+  $('stockIvidColumn').value = 'ProductId';
+  $('stockPriceColumn').value = 'SalePrice';
   clearErrors();
   showScreen('form');
 }

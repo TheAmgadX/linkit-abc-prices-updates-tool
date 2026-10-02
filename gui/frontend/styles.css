@@ -124,6 +124,15 @@ input, textarea {
   gap: 18px;
 }
 
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row .field {
+  flex: 1;
+}
+
 .field {
   display: flex;
   flex-direction: column;

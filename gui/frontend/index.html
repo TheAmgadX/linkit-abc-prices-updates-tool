@@ -75,6 +75,35 @@
           <span class="field-error" id="error-imfFile" aria-live="polite"></span>
         </div>
 
+        <!-- IMF Columns -->
+        <div class="form-row">
+          <div class="field" id="field-imfIvidColumn">
+            <label class="label" for="imfIvidColumn">IMF Price ID Column</label>
+            <input
+              id="imfIvidColumn"
+              class="input"
+              type="text"
+              value="ProductId"
+              placeholder="e.g. ProductId"
+              autocomplete="off"
+            />
+            <span class="field-error" id="error-imfIvidColumn" aria-live="polite"></span>
+          </div>
+
+          <div class="field" id="field-imfVatColumn">
+            <label class="label" for="imfVatColumn">IMF VAT Column</label>
+            <input
+              id="imfVatColumn"
+              class="input"
+              type="text"
+              value="VAT"
+              placeholder="e.g. VAT"
+              autocomplete="off"
+            />
+            <span class="field-error" id="error-imfVatColumn" aria-live="polite"></span>
+          </div>
+        </div>
+
         <!-- Stock File -->
         <div class="field" id="field-stockFile">
           <label class="label" for="stockFile">Stock File</label>
@@ -92,6 +121,35 @@
             </button>
           </div>
           <span class="field-error" id="error-stockFile" aria-live="polite"></span>
+        </div>
+
+        <!-- Stock Columns -->
+        <div class="form-row">
+          <div class="field" id="field-stockIvidColumn">
+            <label class="label" for="stockIvidColumn">Stock Price ID Column</label>
+            <input
+              id="stockIvidColumn"
+              class="input"
+              type="text"
+              value="ProductId"
+              placeholder="e.g. ProductId"
+              autocomplete="off"
+            />
+            <span class="field-error" id="error-stockIvidColumn" aria-live="polite"></span>
+          </div>
+
+          <div class="field" id="field-stockPriceColumn">
+            <label class="label" for="stockPriceColumn">Stock Price Column</label>
+            <input
+              id="stockPriceColumn"
+              class="input"
+              type="text"
+              value="SalePrice"
+              placeholder="e.g. SalePrice"
+              autocomplete="off"
+            />
+            <span class="field-error" id="error-stockPriceColumn" aria-live="polite"></span>
+          </div>
         </div>
 
         <button type="submit" id="btn-process" class="btn-primary">

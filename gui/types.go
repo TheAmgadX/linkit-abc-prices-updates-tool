@@ -2,10 +2,14 @@ package gui
 
 // ProcessInput holds the user-supplied parameters from the frontend form.
 type ProcessInput struct {
-	OrgName       string `json:"orgName"`
-	OutputDir     string `json:"outputDir"`
-	IMFFilePath   string `json:"imfFilePath"`
-	StockFilePath string `json:"stockFilePath"`
+	OrgName           string `json:"orgName"`
+	OutputDir         string `json:"outputDir"`
+	IMFFilePath       string `json:"imfFilePath"`
+	StockFilePath     string `json:"stockFilePath"`
+	StockIVIDColumn   string `json:"stockIvidColumn"`
+	StockPriceColumn  string `json:"stockPriceColumn"`
+	IMFIVIDColumn     string `json:"imfIvidColumn"`
+	IMFVATColumn      string `json:"imfVatColumn"`
 }
 
 // ProcessingResult is the DTO returned to the frontend after a successful run.
